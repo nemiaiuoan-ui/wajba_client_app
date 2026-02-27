@@ -105,6 +105,40 @@ class RestaurantProvider extends ChangeNotifier {
   List<String> get productCategories =>
       _products.map((p) => p.category).toSet().toList();
 
+  List<mymodels.Product> productsByCategory(String cat) =>
+      cat == 'Tous'
+          ? _products
+          : _products.where((p) => p.category == cat).toList();
+
+  List<mymodels.Restaurant> search(String query) {
+    if (query.isEmpty) return _restaurants;
+    final q = query.toLowerCase();
+    return _restaurants
+        .where((r) =>
+            r.name.toLowerCase().contains(q) ||
+            r.cuisine.toLowerCase().contains(q))
+        .toList();
+  }
+
+  Future<void> loadRestaurants() async {
+    _setLoading(true);
+    try {
+      final snap = await _db
+          .collection('restaurants')
+          .where('isOpen', isEqualTo: true)
+          .get();
+
+      _restaurants = snap.docs
+          .map((d) =>
+              mymodels.Restaurant.fromMap(d.id, d.data()))
+          .toList();
+
+      _setLoading(false);
+    } catch (e) {
+      _setError("Impossible de charger les restaurants");
+    }
+  }
+
   Future<void> loadRestaurantDetail(String id) async {
     _setLoading(true);
     try {
