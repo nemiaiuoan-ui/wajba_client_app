@@ -22,8 +22,12 @@ class CartProvider extends ChangeNotifier {
   int get subtotal =>
       _items.fold(0, (sum, item) => sum + item.total);
 
-  void addItem(mymodels.Product product, String restId, String restName) {
-    if (_restaurantId.isNotEmpty && _restaurantId != restId) {
+  void addItem(
+      mymodels.Product product,
+      String restId,
+      String restName) {
+    if (_restaurantId.isNotEmpty &&
+        _restaurantId != restId) {
       clearCart();
     }
 
@@ -124,6 +128,34 @@ class OrderProvider extends ChangeNotifier {
       _setError("Erreur lors de la commande");
       return null;
     }
+  }
+
+  Future<void> loadOrders(String userId) async {
+    _setLoading(true);
+    try {
+      final snap = await _db
+          .collection('orders')
+          .where('userId', isEqualTo: userId)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      _orders = snap.docs
+          .map((d) => mymodels.Order.fromMap(d.id, d.data()))
+          .toList();
+
+      _setLoading(false);
+    } catch (e) {
+      _setError("Impossible de charger les commandes");
+    }
+  }
+
+  Stream<mymodels.Order> trackOrder(String orderId) {
+    return _db
+        .collection('orders')
+        .doc(orderId)
+        .snapshots()
+        .map((s) =>
+            mymodels.Order.fromMap(s.id, s.data()!));
   }
 
   void _setLoading(bool v) {
