@@ -22,6 +22,15 @@ class CartProvider extends ChangeNotifier {
   int get subtotal =>
       _items.fold(0, (sum, item) => sum + item.total);
 
+  int total(int deliveryFee) => subtotal + deliveryFee;
+
+  int quantityOf(String productId) {
+    final index =
+        _items.indexWhere((i) => i.product.id == productId);
+    if (index >= 0) return _items[index].quantity;
+    return 0;
+  }
+
   void addItem(
       mymodels.Product product,
       String restId,
@@ -75,6 +84,69 @@ class CartProvider extends ChangeNotifier {
 }
 
 //
+// ================= RESTAURANT PROVIDER =================
+//
+
+class RestaurantProvider extends ChangeNotifier {
+  final _db = FirebaseFirestore.instance;
+
+  List<mymodels.Restaurant> _restaurants = [];
+  mymodels.Restaurant? _selected;
+  List<mymodels.Product> _products = [];
+  bool _isLoading = false;
+  String _error = '';
+
+  List<mymodels.Restaurant> get restaurants => _restaurants;
+  mymodels.Restaurant? get selected => _selected;
+  List<mymodels.Product> get products => _products;
+  bool get isLoading => _isLoading;
+  String get error => _error;
+
+  List<String> get productCategories =>
+      _products.map((p) => p.category).toSet().toList();
+
+  Future<void> loadRestaurantDetail(String id) async {
+    _setLoading(true);
+    try {
+      final doc =
+          await _db.collection('restaurants').doc(id).get();
+
+      if (doc.exists) {
+        _selected =
+            mymodels.Restaurant.fromMap(id, doc.data()!);
+      }
+
+      final prodSnap = await _db
+          .collection('restaurants')
+          .doc(id)
+          .collection('products')
+          .where('isAvailable', isEqualTo: true)
+          .get();
+
+      _products = prodSnap.docs
+          .map((d) =>
+              mymodels.Product.fromMap(d.id, d.data()))
+          .toList();
+
+      _setLoading(false);
+    } catch (e) {
+      _setError("Impossible de charger le restaurant");
+    }
+  }
+
+  void _setLoading(bool v) {
+    _isLoading = v;
+    notifyListeners();
+  }
+
+  void _setError(String e) {
+    _error = e;
+    _isLoading = false;
+    notifyListeners();
+  }
+}
+
+//
 // ================= ORDER PROVIDER =================
 //
 
@@ -82,12 +154,10 @@ class OrderProvider extends ChangeNotifier {
   final _db = FirebaseFirestore.instance;
 
   List<mymodels.Order> _orders = [];
-  mymodels.Order? _activeOrder;
   bool _isLoading = false;
   String _error = '';
 
   List<mymodels.Order> get orders => _orders;
-  mymodels.Order? get activeOrder => _activeOrder;
   bool get isLoading => _isLoading;
   String get error => _error;
 
@@ -140,7 +210,8 @@ class OrderProvider extends ChangeNotifier {
           .get();
 
       _orders = snap.docs
-          .map((d) => mymodels.Order.fromMap(d.id, d.data()))
+          .map((d) =>
+              mymodels.Order.fromMap(d.id, d.data()))
           .toList();
 
       _setLoading(false);
