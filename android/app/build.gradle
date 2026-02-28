@@ -18,10 +18,7 @@ android {
 
     buildTypes {
         release {
-            // Remplace par ta signature si tu veux signer pour Play Store
             signingConfig signingConfigs.debug
-
-            // Optimisations recommandées
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
