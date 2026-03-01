@@ -1,3 +1,5 @@
+import 'package:wajba_client/config/constants.dart';
+import 'package:wajba_client/config/colors.dart';
 // ─── PHONE AUTH SCREEN ────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

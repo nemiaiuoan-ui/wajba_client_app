@@ -1,3 +1,4 @@
+import 'package:wajba_client/config/colors.dart';
 import 'package:flutter/material.dart';
 import 'colors.dart';
 

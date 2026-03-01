@@ -1,3 +1,5 @@
+import 'package:wajba_client/config/constants.dart';
+import 'package:wajba_client/config/colors.dart';
 // ══════════════════════════════════════════════════════════════════
 // PROFILE SETUP SCREEN
 // ══════════════════════════════════════════════════════════════════
