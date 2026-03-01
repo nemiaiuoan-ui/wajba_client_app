@@ -1,4 +1,4 @@
-package com.example.wajba_client
+package com.example.clean_app
 
 import io.flutter.embedding.android.FlutterActivity
 
