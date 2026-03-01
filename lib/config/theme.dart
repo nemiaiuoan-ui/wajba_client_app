@@ -32,7 +32,7 @@ class WajbaTheme {
       background: WajbaColors.background,
       surface: WajbaColors.cardBg,
       error: WajbaColors.error,
-    ),
+    )),
     scaffoldBackgroundColor: WajbaColors.background,
     appBarTheme: const AppBarTheme(
       backgroundColor: WajbaColors.white,
@@ -44,51 +44,51 @@ class WajbaTheme {
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: WajbaColors.dark,
-      ),
-    ),
+      )),
+    )),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: WajbaColors.primary,
         foregroundColor: WajbaColors.white,
-        minimumSize: const Size(double.infinity, 52),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        minimumSize: const Size(double.infinity, 52)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14))),
         textStyle: const TextStyle(
           fontFamily: 'Poppins',
           fontSize: 16,
           fontWeight: FontWeight.w600,
-        ),
-      ),
-    ),
+        )),
+      )),
+    )),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: WajbaColors.white,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: WajbaColors.grey200),
-      ),
+        borderRadius: BorderRadius.all(Radius.circular(14)),
+        borderSide: const BorderSide(color: WajbaColors.grey200)),
+      )),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: WajbaColors.grey200),
-      ),
+        borderRadius: BorderRadius.all(Radius.circular(14)),
+        borderSide: const BorderSide(color: WajbaColors.grey200)),
+      )),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: WajbaColors.primary, width: 2),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    ),
-    cardTheme: CardTheme(
+        borderRadius: BorderRadius.all(Radius.circular(14)),
+        borderSide: const BorderSide(color: WajbaColors.primary, width: 2)),
+      )),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16)),
+    )),
+    cardTheme: const CardThemeData(
       color: WajbaColors.cardBg,
       elevation: 2,
       shadowColor: WajbaColors.shadow,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-    ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+    )),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: WajbaColors.white,
       selectedItemColor: WajbaColors.primary,
       unselectedItemColor: WajbaColors.grey400,
       showUnselectedLabels: true,
       type: BottomNavigationBarType.fixed,
-    ),
+    )),
   );
 }
 
