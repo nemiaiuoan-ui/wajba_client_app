@@ -1,60 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:wajba_client/firebase_options.dart';
-import 'package:provider/provider.dart';
-
-import 'config/theme.dart';
-import 'config/router.dart';
-import 'providers/auth_provider.dart';
-import 'providers/providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'core/cache/cache_service.dart';
+import 'core/config/env_config.dart';
+import 'core/theme/app_theme.dart';
+import 'core/navigation/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Forcer orientation portrait
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-
-  // Initialiser Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  runApp(const WajbaApp());
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarColor: Colors.white,
+    systemNavigationBarIconBrightness: Brightness.dark,
+  ));
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await CacheService.init();
+  timeago.setLocaleMessages('fr', timeago.FrMessages());
+  assert(() {
+    debugPrint('🚀 WAJBA — Env: ${envConfig.name} | API: ${envConfig.baseUrl}');
+    return true;
+  }());
+  runApp(const ProviderScope(child: WajbaApp()));
 }
 
-class WajbaApp extends StatelessWidget {
+class WajbaApp extends ConsumerWidget {
   const WajbaApp({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => CartProvider()),
-        ChangeNotifierProvider(create: (_) => RestaurantProvider()),
-        ChangeNotifierProvider(create: (_) => OrderProvider()),
-      ],
-      child: Builder(
-        builder: (context) {
-          final auth   = context.watch<AuthProvider>();
-          final router = AppRouter.router(auth);
-
-          return MaterialApp.router(
-            title:           WajbaStrings.appName,
-            debugShowCheckedModeBanner: false,
-            theme:           WajbaTheme.theme,
-            routerConfig:    router,
-            builder: (context, child) => MediaQuery(
-              // Empêcher le texte de grandir avec les paramètres système
-              data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
-              child: child!,
-            ),
-          );
-        },
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
+    return MaterialApp.router(
+      title: 'WAJBA',
+      debugShowCheckedModeBanner: envConfig.isDev,
+      theme: WajbaTheme.light,
+      routerConfig: router,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          textScaler: TextScaler.linear(MediaQuery.of(context).textScaler.scale(1.0).clamp(0.85, 1.15)),
+        ),
+        child: child!,
       ),
     );
   }
